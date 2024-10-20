@@ -1,98 +1,123 @@
 <template>
-  <div class="home">
-    <div id="heading-line">
-      <h1>
-        Home
-        <loading-spinner id="spinner" v-bind:spin="isLoading" />
-      </h1>
+  <div>
+    <div id="home" v-if="isLoading">
+      <loading-spinner id="spinner" :spin="true" />
     </div>
-    <h2>Loading spinner demonstration</h2>
-    <p>
-      This is a demonstration of how you can show or hide a "spinner" icon to
-      let the user know something is happening. Before calling an API, you'd set
-      the data property <code>isLoading</code> to <code>true</code>. When the
-      call completes, set it to <code>false</code>.
-    </p>
-    <p>
-      For this demonstration, clicking the checkbox below sets
-      <code>isLoading</code> to <code>true</code>, so it simulates what the user
-      would see when your app is accessing an API.
-    </p>
-    <input type="checkbox" name="loading" id="loading" v-model="isLoading" /> Is
-    Loading
-    <p id="login-message" v-if="!isLoggedIn">
-      Welcome! You may browse anonymously as much as you wish,<br />
-      but you must
-      <router-link v-bind:to="{ name: 'login' }">Login</router-link> to add
-      items to your shopping cart.
-    </p>
-    <h2>Font-awesome demonstration</h2>
-    <p>
-      This code shows you how you can include Font-awesome icons on your page. Below are two icons:
-      one to indicate a "tile" view of products, and another to indicate a "table" view. There's also a little bit
-      of styling to get you started, but you can style it your own way. And there's a property to track which view is "active".
-    </p>
-    <font-awesome-icon
-      v-bind:class="{ 'view-icon': true, active: cardView }"
-      v-on:click="cardView = true"
-      icon="fa-solid fa-grip"
-      title="View tiles"
-    />
-    <font-awesome-icon
-      v-bind:class="{ 'view-icon': true, active: !cardView }"
-      v-on:click="cardView = false"
-      icon="fa-solid fa-table"
-      title="View table"
-    />
+    <div id="main-div" v-else>
+      <!-- Conditional rendering based on flags -->
+      <div v-if="showAgentList" class="agent-list">
+        <agent-list />
+      </div>
+      <div v-if="showAthleteList" class="athlete-table">
+        <athlete-table />
+      </div>
+      <div v-if="showBrandList" class="brand-list">
+        <brand-list />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import LoadingSpinner from "../components/LoadingSpinner.vue";
+import { mapState } from 'vuex';
+import AgentList from '../components/AgentList.vue';
+import AthleteTable from '../components/AthleteTable.vue';
+import BrandList from '../components/BrandList.vue';
+import LoadingSpinner from '../components/LoadingSpinner.vue';
+import { resourceService } from '../services/ResourceService.js';
 
 export default {
-  components: {
-    LoadingSpinner,
-  },
+  components: { AgentList, AthleteTable, BrandList, LoadingSpinner },
+
   data() {
     return {
-      isLoading: false,
-      cardView: true,
+      isLoading: true,
+      showAgentList: false,
+      showAthleteList: false,
+      showBrandList: false,
     };
   },
+
   computed: {
-    isLoggedIn() {
-      return this.$store.state.token.length > 0;
+    ...mapState({
+      agents: (state) => state.agents,
+      athletes: (state) => state.athletes,
+      brands: (state) => state.brands,
+    }),
+  },
+
+  created() {
+    this.isLoading = true;
+
+    // Fetch data from the service and commit to Vuex
+    Promise.all([
+      resourceService.getAgents(),
+      resourceService.getAthletes(),
+      resourceService.getBrands(),
+    ])
+      .then(([agentResponse, athleteResponse, brandResponse]) => {
+        this.$store.commit('SET_AGENTS', agentResponse.data);
+        this.$store.commit('SET_ATHLETES', athleteResponse.data);
+        this.$store.commit('SET_BRANDS', brandResponse.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      })
+      .finally(() => {
+        this.isLoading = false;
+      });
+  },
+
+  methods: {
+    showAgents() {
+      this.showAgentList = true;
+      this.showAthleteList = false;
+      this.showBrandList = false;
+    },
+    showAthletes() {
+      this.showAgentList = false;
+      this.showAthleteList = true;
+      this.showBrandList = false;
+    },
+    showBrands() {
+      this.showAgentList = false;
+      this.showAthleteList = false;
+      this.showBrandList = true;
     },
   },
 };
 </script>
 
-<style scoped>
-#spinner {
-  color: green;
+<style>
+#main-div {
+  grid-area: main;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-template-areas:
+    "agents athletes";
+  gap: 20px; 
+  padding-bottom: 50px;
+  background-color: transparent;
 }
 
-.view-icon {
-  font-size: 1.2rem;
-  margin-right: 7px;
-  padding: 3px;
-  color: #444;
-  border-radius: 3px;
+.agent-list {
+  grid-area: agents;
 }
 
-.view-icon.active {
-  background-color: lightgreen;
+.athlete-table {
+  grid-area: athletes;
 }
 
-.view-icon:not(.active) {
-  font-size: 1.2rem;
-  margin-right: 7px;
-  cursor: pointer;
+.brand-list {
+  
 }
 
-.view-icon:not(.active):hover {
-  color: blue;
-  background-color: rgba(255, 255, 255, 0.7);
+@media (max-width: 425px) {
+  #main-div {
+    grid-template-columns: 1fr; 
+    grid-template-areas:
+      "agents"
+      "athletes";
+  }
 }
 </style>

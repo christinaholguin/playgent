@@ -11,6 +11,9 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCartPlus, faTrashCan, faXmark, faMagnifyingGlass, faRotate, faTable, faGrip }
   from '@fortawesome/free-solid-svg-icons'
+import { faFacebookF, faTwitter, faInstagram, faTiktok }
+  from '@fortawesome/free-brands-svg-icons'
+
 
 /* add icons to the library */
 library.add(faCartPlus);
@@ -20,6 +23,7 @@ library.add(faMagnifyingGlass);
 library.add(faRotate);
 library.add(faTable);
 library.add(faGrip);
+library.add(faFacebookF, faTwitter, faInstagram, faTiktok);
 
 /* sets the base url for server API communication with axios */
 axios.defaults.baseURL = import.meta.env.VITE_REMOTE_API;

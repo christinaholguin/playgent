@@ -6,7 +6,11 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import LogoutView from '../views/LogoutView.vue'
 import RegisterView from '../views/RegisterView.vue'
-
+import AgentView from '../views/AgentView.vue'
+import AthleteView from '../views/AthleteView.vue';
+import BrandView from '../views/BrandView.vue';
+import AthleteDetail from '../components/AthleteDetail.vue';
+import EditAthleteView from '../views/EditAthleteView.vue'
 
 /**
  * The Vue Router is used to "direct" the browser to render a specific view component
@@ -21,9 +25,51 @@ const routes = [
       path: '/',
       name: 'home',
       component: HomeView,
+      // meta: {
+      //   requiresAuth: false
+      // }
+    },
+    {
+      path: "/agents",
+      name: "agents",
+      component: AgentView,
       meta: {
-        requiresAuth: true
+        requiresAuth: false
       }
+    },
+    {
+      path: "/athletes",
+      name: "athletes",
+      component: AthleteView,
+      meta: {
+        requiresAuth: false
+      }
+    },
+    {
+      path: '/athlete/edit/:athleteId',
+      name: 'editAthlete',
+      component: EditAthleteView
+    },
+    {
+      path: '/athletes/:athleteId', // Route for athlete detail
+      name: 'athleteDetail',
+      component: AthleteDetail,
+      meta: {
+        requiresAuth: false,
+      },
+    },
+    {
+      path: "/brands",
+      name: "brands",
+      component: BrandView,
+      meta: {
+        requiresAuth: false
+      }
+    },
+    {
+      path: '/unauthorized',
+      name: 'Unauthorized',
+      component: () => import('../services/AuthService.js'),
     },
     {
       path: "/login",
@@ -48,7 +94,22 @@ const routes = [
       meta: {
         requiresAuth: false
       }
-    }
+    },
+    {
+      path: '/create-account/agent',
+      name: 'AgentCreateAccount',
+      component: () => import('../components/AgentCreateAccountView.vue'),
+    },
+    {
+      path: '/create-account/athlete',
+      name: 'athleteCreateAccount',
+      component: () => import('../components/AthleteCreateAccountView.vue'),
+    },
+    // {
+    //   path: '/create-account/brand',
+    //   name: 'brandCreateAccount',
+    //   component: BrandCreateAccountView, // brand account creation. WILL CREATE LATER AFTER ADDING MOCK DATA
+    // }
   ];
 
 // Create the router

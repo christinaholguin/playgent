@@ -1,89 +1,38 @@
 <template>
   <div id="register">
-    <form v-on:submit.prevent="register">
-      <h1>Create Account</h1>
-      <div id="fields">
-        <label for="username">Username</label>
-        <input
-          type="text"
-          id="username"
-          placeholder="Username"
-          v-model="user.username"
-          required
-          autofocus
-        />
-        <label for="name">Name</label>
-        <input
-          type="text"
-          id="name"
-          placeholder="Name"
-          v-model="user.name"
-          required
-        />
-        <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          placeholder="Password"
-          v-model="user.password"
-          required
-        />
-        <label for="confirmPassword">Confirm password</label>
-        <input
-          type="password"
-          id="confirmPassword"
-          placeholder="Confirm Password"
-          v-model="user.confirmPassword"
-          required
-        />
-
-        <label for="address">Address</label>
-        <input
-          type="text"
-          id="address"
-          placeholder="Address"
-          v-model="user.address"
-        />
-
-        <label for="city">City</label>
-        <input type="text" id="city" placeholder="City" v-model="user.city" />
-
-        <label for="state">State</label>
-        <input
-          type="text"
-          id="state"
-          placeholder="State"
-          v-model="user.stateCode"
-          maxlength="2"
-          required
-        />
-
-        <label for="zip">ZIP</label>
-        <input
-          type="number"
-          id="zip"
-          placeholder="ZIP"
-          v-model="user.zip"
-          required
-          minlength="5"
-          maxlength="5"
-        />
-        <div></div>
-        <div>
-          <button type="submit">Create Account</button>
-        </div>
+    <!-- Main Registration Type Popup -->
+    <div v-if="showTypeModal" class="overlay" @click="closeTypeModal"></div>
+    <div v-if="showTypeModal" class="modal">
+      <h1>Register as an:</h1>
+      <div id="role-buttons">
+        <button @click="openCreateAccount('agent')">AGENT</button>
+        <button @click="openCreateAccount('athlete')">ATHLETE</button>
+        <button v-if="isAdmin" @click="openCreateAccount('brand')">BRAND</button>
       </div>
-      <hr />
-      Have an account?
-      <router-link v-bind:to="{ name: 'login' }">Sign in!</router-link>
-    </form>
+      <button @click="closeTypeModal">Close</button>
+    </div>
+
+    <!-- Create Account Popup -->
+    <div v-if="showModal" class="overlay" @click="closeModal"></div>
+    <div v-if="showModal" class="modal">
+      <component :is="`${accountType}CreateAccountView`"></component>
+      <button @click="closeModal">Close</button>
+    </div>
   </div>
 </template>
 
 <script>
 import authService from "../services/AuthService";
+import AgentCreateAccountView from '../components/AgentCreateAccountView.vue';
+import AthleteCreateAccountView from '../components/AthleteCreateAccountView.vue';
+// import BrandCreateAccountView from './BrandCreateAccountView.vue';
 
 export default {
+  components: {
+    AgentCreateAccountView,
+    AthleteCreateAccountView,
+    // BrandCreateAccountView,
+  },
   data() {
     return {
       user: {
@@ -97,7 +46,15 @@ export default {
         zip: "",
         role: "user",
       },
+      showModal: false,
+      showTypeModal: false, // For the main registration type selection
+      accountType: '', // To hold the selected account type
     };
+  },
+  computed: {
+    isAdmin() {
+      return this.$store.state.user && this.$store.state.user.role === 'admin';
+    },
   },
   methods: {
     error(msg) {
@@ -106,8 +63,22 @@ export default {
     success(msg) {
       alert(msg);
     },
+    closeModal() { 
+      this.showModal = false; 
+    },
+    closeTypeModal() {
+      this.showTypeModal = false; 
+    },
+    openCreateAccount(type) {
+      this.accountType = type; 
+      this.showModal = true; 
+      this.closeTypeModal(); 
+    },
+    goBackToHome() {
+      this.$router.push('/home');
+    },
     register() {
-      if (this.user.password != this.user.confirmPassword) {
+      if (this.user.password !== this.user.confirmPassword) {
         this.error("Password & Confirm Password do not match");
       } else {
         authService
@@ -115,6 +86,7 @@ export default {
           .then((response) => {
             if (response.status == 201) {
               this.success("Thank you for registering, please sign in.");
+              this.closeModal();
               this.$router.push({
                 path: "/login",
               });
@@ -126,7 +98,6 @@ export default {
               this.error(error);
             } else if (response.status === 400) {
               if (response.data.errors) {
-                // Show the validation errors
                 let msg = "Validation error: ";
                 for (let err of response.data.errors) {
                   msg += `'${err.field}':${err.defaultMessage}. `;
@@ -146,4 +117,50 @@ export default {
 </script>
 
 <style scoped>
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+.modal {
+  z-index: 2000;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  z-index: 1001;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  max-width: 400px;
+  width: 100%;
+  max-height: 80vh; 
+  overflow-y: auto;
+}
+#register {
+  display: flex;
+  flex-direction: column;
+}
+#role-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 5px;
+}
+button:hover {
+  background-color: #45a049;
+}
 </style>
