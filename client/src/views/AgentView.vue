@@ -46,29 +46,29 @@ export default {
   background-color:  #ad0404;
   border: 1px solid #ccc
 }.agent-container {
-  display: flex; /* Display agents in a row */
-  overflow-x: auto; /* Enable horizontal scrolling */
-  scroll-snap-type: x mandatory; /* Enable scroll snapping */
-  padding: 10px 0; /* Optional padding */
+  display: flex; 
+  overflow-x: auto; 
+  scroll-snap-type: x mandatory; 
+  padding: 10px 0; 
 }
 
 .agent-card {
-  background-color: white; /* Background for agent cards */
+  background-color: white; 
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
-  margin-right: 10px; /* Space between cards */
-  min-width: 250px; /* Minimum width for cards */
-  scroll-snap-align: start; /* Align cards to the start when scrolling */
-  flex: 0 0 auto; /* Prevent cards from growing */
+  margin-right: 10px; 
+  min-width: 250px; 
+  scroll-snap-align: start; 
+  flex: 0 0 auto; 
 }
 
 .agent-card strong {
-  display: block; /* Display name in a block */
-  margin-bottom: 5px; /* Space below name */
+  display: block; 
+  margin-bottom: 5px; 
 }
 
 .agent-card p {
-  margin: 0; /* Reset margin for paragraphs */
+  margin: 0; 
 }
 </style>

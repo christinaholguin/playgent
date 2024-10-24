@@ -16,12 +16,18 @@ const resourceService = {
   getAgents(){
     return axios.get('/agents');
   },
-  createAgency(agentData) {  // Add this method
-    return axios.post(API_URL, agentData);
-  },
-  getBrands(){
-    return axios.get('/brands');
-  }
+    createAgency(agent) {
+      return axios.post('/agents', agent);
+    },
+    createAthlete(athlete) {
+      return axios.post('/athletes', athlete);
+    },
+    updateAgent(agentId, agent){
+      return axios.put(`/agents/${agentId}`, agent);
+    }
+  // getBrands(){
+  //   return axios.get('/brands');
+  // }
 };
 
 export { resourceService };

@@ -50,7 +50,7 @@ export default {
           id: 4,
           name: 'ELECTROLIT',
           image: 'https://via.placeholder.com/100?text=Electrolit',
-          description: 'Electrolit is a brand of electrolyte solution that helps with hydration.',
+          description: 'leading hydration solution that delivers essential electrolytes for optimal performance and recovery. Designed for athletes and active individuals, Electrolit helps replenish lost fluids and minerals, keeping you energized and ready to tackle any challenge.',
         },
         {
           id: 5,
@@ -95,36 +95,36 @@ export default {
 
 .brand-display {
   display: flex;
-  align-items: center; /* Center items vertically */
+  align-items: center; 
 }
 
 .brand-card {
-  display: flex; /* Use flexbox to align image and text */
-  align-items: center; /* Center items vertically */
-  background-color: white; /* Background for brand cards */
+  display: flex;
+  align-items: center; 
+  background-color: white; 
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
-  margin: 0 20px; /* Space between buttons and card */
-  min-width: 350px; /* Minimum width for cards */
+  margin: 0 20px; 
+  min-width: 350px; 
 }
 .brand-image {
-  width: 100px; /* Set a fixed width for the image */
-  height: auto; /* Maintain aspect ratio */
-  margin-right: 20px; /* Space between image and text */
+  width: 100px; 
+  height: auto; 
+  margin-right: 20px; 
 }
 .nav-button {
-  background-color: #333; /* Background for navigation buttons */
-  color: white; /* Text color */
-  border: none; /* Remove border */
-  border-radius: 5px; /* Rounded corners */
-  padding: 10px; /* Padding for button */
-  cursor: pointer; /* Pointer cursor on hover */
-  font-size: 1.5em; /* Increase font size */
+  background-color: #333; 
+  color: white; 
+  border: none; 
+  border-radius: 5px; 
+  padding: 10px; 
+  cursor: pointer; 
+  font-size: 1.5em; 
 }
 
 .nav-button:disabled {
-  background-color: #aaa; /* Color for disabled buttons */
-  cursor: not-allowed; /* Change cursor to indicate it's disabled */
+  background-color: #aaa; 
+  cursor: not-allowed; 
 }
 </style>

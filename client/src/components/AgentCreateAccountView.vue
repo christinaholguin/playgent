@@ -14,13 +14,12 @@
           <label for="teamAssociations">Team Associations:</label>
           <input type="text" v-model="teamAssociations" required />
         </div>
-        <button type="submit">Register Agent</button>
-
-        <div class="button-container">
-        <!-- <button type="submit">Submit</button> -->
-      </div>
-      </form>
-    </div>
+        <button type="submit" :disabled="isSubmitting">
+        {{ isSubmitting ? 'Submitting...' : 'Register Agent' }}
+      </button>
+    </form>
+    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+  </div>
   </template>
   
   <script>
@@ -31,31 +30,34 @@ export default {
     return {
       agentName: '',
       yearsOfExperience: '',
-      teamAssociations: ''
+      teamAssociations: '',
+      isSubmitting: false,  // To track submission state
+      errorMessage: '',     // For error feedback
     };
   },
   methods: {
     async submitAgent() {
+      this.isSubmitting = true;
+      this.errorMessage = '';  // Clear previous errors
+
       try {
-        // Prepare the data to send
         const agentData = {
           agencyName: this.agentName,
           yearsOfExperience: this.yearsOfExperience,
           teamAssociations: this.teamAssociations,
         };
 
-        // Call the API to create an agency
         const response = await resourceService.createAgency(agentData);
-        
-        // Handle the response as needed
+
         console.log("Agent account created:", response.data);
         alert("Agent account created successfully!");
-        
-        // Optionally, reset the form
+
         this.resetForm();
       } catch (error) {
         console.error("Error creating agent account:", error);
-        alert("Failed to create agent account.");
+        this.errorMessage = "Failed to create agent account. Please try again.";
+      } finally {
+        this.isSubmitting = false;  // Reset submitting state
       }
     },
     resetForm() {
@@ -66,3 +68,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.error {
+  color: red;
+}
+</style>
